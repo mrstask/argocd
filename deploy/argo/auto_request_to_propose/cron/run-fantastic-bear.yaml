@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: fantastic-bear
+spec:
+  suspend: true
+  schedule: "0 9 * * *"
+  timezone: "Europe/Moscow"
+
+  concurrencyPolicy: "Forbid"
+
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+
+  workflowSpec:
+    workflowTemplateRef:
+      name: 1-fantastic-bear
+    entrypoint: pipeline
+    ttlStrategy:
+      secondsAfterSuccess: 864000
+      secondsAfterFailure: 864000

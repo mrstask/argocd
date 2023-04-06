@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: 2-fantastic-bear-sensor
+spec:
+  template:
+    serviceAccountName: sa-argo-workflow
+  dependencies:
+    - name: workflow-event
+      eventSourceName: 1-fantastic-bear-watcher
+      eventName: 1-fantastic-bear-succeeded
+  triggers:
+    - template:
+        name: trigger-2-fantastic-bear
+        k8s:
+          group: argoproj.io
+          version: v1alpha1
+          resource: workflows
+          operation: create
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: 2-fantastic-bear-
+              spec:
+                entrypoint: argosay
+                arguments:
+                  parameters:
+                  - name: message
+                    value: "hello from 2-fantastic-bear"
+                workflowTemplateRef:
+                  name: 2-fantastic-bear
+                ttlStrategy:
+                  secondsAfterCompletion: 300

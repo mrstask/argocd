@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: Pod
-metadata:
-  name: temp-pod
-spec:
-  containers:
-  - name: temp-container
-    image: curlimages/curl
-    command: [ "/bin/sh", "-c", "curl http://http-event-source-svc:12000/hello -d '{\"name\": \"Argo Events\"}'" ]

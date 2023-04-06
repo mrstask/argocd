@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: 2-fantastic-bear
+  namespace: argo-workflows
+  labels:
+    example: "true"
+    workflows.argoproj.io/creator: system-serviceaccount-argo-workflows-sa-argo-server
+spec:
+  entrypoint: argosay
+  arguments:
+    parameters:
+    - name: message
+      value: 2 fantastic bear
+  templates:
+  - name: argosay
+    inputs:
+      parameters:
+      - name: message
+        value: "{{workflow.parameters.message}}"
+    container:
+      name: main
+      image: argoproj/argosay:v2
+      command: ["/argosay"]
+      args:
+      - echo
+      - "{{inputs.parameters.message}}"
+  ttlStrategy:
+    secondsAfterCompletion: 300
+  podGC:
+    strategy: OnPodCompletion
+  workflowMetadata:
+    labels:
+      example: "true"
