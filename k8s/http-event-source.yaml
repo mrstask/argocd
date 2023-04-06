@@ -1,0 +1,11 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: http-event-source
+spec:
+  type: "http"
+  http:
+    example:
+      port: 12000
+      endpoint: /hello
+      method: POST
