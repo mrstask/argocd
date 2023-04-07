@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nats-streaming
+  namespace: argo-events
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nats-streaming
+  template:
+    metadata:
+      labels:
+        app: nats-streaming
+    spec:
+      containers:
+        - name: nats-streaming
+          image: nats-streaming:0.22.0
+          args:
+            - -m=8222
+            - --cluster_id=argo-events
+            - --store=memory
+            - --max_channels=100
+            - --max_subs=1000
+            - --max_msgs=10000
+            - --max_bytes=10485760
+          ports:
+            - containerPort: 8222
+              name: metrics
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nats-streaming
+  namespace: argo-events
+spec:
+  selector:
+    app: nats-streaming
+  ports:
+    - name: metrics
+      port: 8222
+      targetPort: metrics
+    - name: client
+      port: 4222
+      targetPort: 4222
+    - name: cluster
+      port: 6222
+      targetPort: 6222
